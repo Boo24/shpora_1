@@ -5,6 +5,7 @@ using NUnit.Framework;
 
 namespace Samples.AAA
 {
+
 	[TestFixture]
 	public class Zip_Should
 	{

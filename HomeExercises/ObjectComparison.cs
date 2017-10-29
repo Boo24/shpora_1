@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Linq;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace HomeExercises
@@ -11,22 +12,18 @@ namespace HomeExercises
 		public void CheckCurrentTsar()
 		{
 			var actualTsar = TsarRegistry.GetCurrentTsar();
-
 			var expectedTsar = new Person("Ivan IV The Terrible", 54, 170, 70,
 				new Person("Vasili III of Russia", 28, 170, 60, null));
 
-			// Перепишите код на использование Fluent Assertions.
-			Assert.AreEqual(actualTsar.Name, expectedTsar.Name);
-			Assert.AreEqual(actualTsar.Age, expectedTsar.Age);
-			Assert.AreEqual(actualTsar.Height, expectedTsar.Height);
-			Assert.AreEqual(actualTsar.Weight, expectedTsar.Weight);
-
-			Assert.AreEqual(expectedTsar.Parent.Name, actualTsar.Parent.Name);
-			Assert.AreEqual(expectedTsar.Parent.Age, actualTsar.Parent.Age);
-			Assert.AreEqual(expectedTsar.Parent.Height, actualTsar.Parent.Height);
-			Assert.AreEqual(expectedTsar.Parent.Parent, actualTsar.Parent.Parent);
+		    actualTsar.ShouldBeEquivalentTo(expectedTsar, options => options
+		        .AllowingInfiniteRecursion()
+		        .Excluding(f => f.SelectedMemberInfo.DeclaringType.Name==typeof(Person).Name
+                && f.SelectedMemberInfo.Name=="Id"));
 		}
-
+        //При использовании подхода выше при фейле теста явно пишется, какие поля не совпали.
+        //При добавлении новых полей в классе придется подправить тест только если
+        //эти поля имеют особое правило сравнения или не должны сравниваться (как поле Id, например).
+        //
 		[Test]
 		[Description("Альтернативное решение. Какие у него недостатки?")]
 		public void CheckCurrentTsar_WithCustomEquality()
@@ -39,6 +36,11 @@ namespace HomeExercises
 			Assert.True(AreEqual(actualTsar, expectedTsar));
 
 		}
+        //Недостатки теста выше:
+        // * Функция сравнения не должна быть определена в классе тестов, т.к. если сравнение понадобится где-то еще,
+        // то это будет во-первых дублирование кода, а во-вторых можно просто забыть поменять ее в тесте, если она изменится.
+        // * При фейле теста видим результат, что ожидалось True, но получили False. Т.е. что конкретно не так мы не увидим
+        // и придется анализировать все данные самим.
 
 		private bool AreEqual(Person actual, Person expected)
 		{
@@ -63,6 +65,15 @@ namespace HomeExercises
 		}
 	}
 
+    public class MyClass
+    {
+        public int Id;
+
+        public MyClass(int i)
+        {
+            Id = i;
+        }
+    }
 	public class Person
 	{
 		public static int IdCounter = 0;

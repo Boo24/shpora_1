@@ -7,7 +7,7 @@ namespace Challenge
 	[TestFixture]
 	public class WordsStatistics_Tests
 	{
-		public static string Authors = "ВАШИ ФАМИЛИИ ЧЕРЕЗ ПРОБЕЛ"; // "Egorov Shagalina"
+		public static string Authors = "Гладышева"; // "Egorov Shagalina"
 
 		public virtual IWordsStatistics CreateStatistics()
 		{
