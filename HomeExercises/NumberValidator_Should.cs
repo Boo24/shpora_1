@@ -15,29 +15,22 @@ namespace HomeExercises
         [TestCase(17, 2, true, "-0.0", ExpectedResult =false)]
         [TestCase(17, 2, true, "0", ExpectedResult = true)]
         [TestCase(17, 2, false, "0.0", ExpectedResult = true)]
-        //[TestCase(3, 2, true, "-0.00", ExpectedResult = false)]
-        //[TestCase(3, 2, true, "+0.00", ExpectedResult = false)]
-        //[TestCase(4, 2, true, "+1.23", ExpectedResult = true)]
-        //[TestCase(3, 2, true, "+1.23", ExpectedResult = false)]
-
-        //[TestCase(3, 2, true, "-1.23", ExpectedResult = false)]
+        [TestCase(4, 2, true, "+1.23", ExpectedResult = true)]
         public bool CorrectWork_WhenCorrectArgumens(int precision, int scale, bool onlyPositive, string value)
 		{
             return new NumberValidator(precision, scale, onlyPositive).IsValidNumber(value);
         }
 
         [TestCase(-1, 2, true)]
-        [TestCase(-1, 2, false)]
-        [TestCase(-1, -2, true)]
-        [TestCase(1, 3, true)]
         [TestCase(0, -1, false)]
+        [TestCase(1, -1, false)]
+        [TestCase(1, 3, true)]
         public void ThrowArgumentException_WhenIncorrectArgs(int precision, int scale, bool onlyPositive)
         {
             Assert.That(() => new NumberValidator(precision, scale, onlyPositive),
                 Throws.TypeOf<ArgumentException>());
         }
 
-        [TestCase(1, 0, true)]
         [TestCase(1, 0, true)]
         public void DoesNotThrow_WhenCorrectArgs(int precision, int scale, bool onlyPositive)
         {
